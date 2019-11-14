@@ -1,4 +1,4 @@
-from time import sleep
+import asyncio
 # from random import shuffle
 # from itertools import cycle
 # from webbrowser import open_new_tab
@@ -8,7 +8,7 @@ from ffi import Dispatcher
 from components import banner, intro, splash, events
 
 
-def main():
+async def main():
     with Dispatcher() as tty:
         # set up screen
         tty.switch()
@@ -39,8 +39,8 @@ def main():
             intro.render(shared_props)
             splash.render(shared_props)
             tty.flush()
-            # Handle events
-            events.listen(shared_props)
+            # Handle events across various sections
+            await events.listen(shared_props)
         # <-- handle closes
 
         # handle.close()
@@ -52,7 +52,7 @@ def main():
         # restore screen
         tty.disable_mouse()
         tty.show_cursor()
-        sleep(0.5)
+        await asyncio.sleep(0.1)
         tty.cook()
         tty.switch_to(0)
     # <-- dispatcher closes
@@ -60,4 +60,4 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    asyncio.run(main())

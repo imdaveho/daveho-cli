@@ -1,3 +1,4 @@
+import asyncio
 from ffi import Color, Effect, InputEvent
 
 
@@ -44,68 +45,75 @@ def render(props):
     handle.prints(instructions[11:])
 
 
-def handle_splash(evt, props):
-    if evt is None:
-        return
-    # setup region and local variables
-    (w, h) = (props["width"], props["height"])
-    from_col = w // 2 - 9
-    from_top = h // 3 + 3 + 2
-    handle = props["handle"]
-    index = props["menu_index"]
-    sections = props["sections"]
+async def handle_splash(evt, props):
+    delay = props["delay"]
+    while True:
+        if evt is None:
+            await asyncio.sleep(delay)
+            continue
+        if not props["is_running"]:
+            break
 
-    handle.set_fx(Effect.Reset)
-    if evt.kind() == InputEvent.Up:
-        if index == 0:
-            # At top, so wrap around
-            handle.goto(from_col, from_top)
-            handle.set_fx(Effect.Dim)
-            handle.prints(sections[0])
-            handle.goto(from_col, from_top + 4)
-            handle.set_fx(Effect.Reset)
-            handle.set_fg(Color.Green)
-            handle.printf(sections[4])
-            props["menu_index"] = 4
-            index = props["menu_index"]
+        # setup region and local variables
+        (w, h) = (props["width"], props["height"])
+        from_col = w // 2 - 9
+        from_top = h // 3 + 3 + 2
+        handle = props["handle"]
+        index = props["menu_index"]
+        sections = props["sections"]
+
+        handle.set_fx(Effect.Reset)
+        if evt.kind() == InputEvent.Up:
+            if index == 0:
+                # At top, so wrap around
+                handle.goto(from_col, from_top)
+                handle.set_fx(Effect.Dim)
+                handle.prints(sections[0])
+                handle.goto(from_col, from_top + 4)
+                handle.set_fx(Effect.Reset)
+                handle.set_fg(Color.Green)
+                handle.printf(sections[4])
+                props["menu_index"] = 4
+                index = props["menu_index"]
+            else:
+                # Move up one
+                handle.goto(from_col, from_top + index)
+                handle.set_fx(Effect.Dim)
+                handle.prints(sections[index])
+                props["menu_index"] = index - 1
+                index = props["menu_index"]
+                handle.goto(from_col, from_top + index)
+                handle.set_fx(Effect.Reset)
+                handle.set_fg(Color.Green)
+                handle.printf(sections[index])
+
+        elif evt.kind() == InputEvent.Down:
+            if index == 4:
+                # At bottom, so wrap around
+                handle.goto(from_col, from_top + 4)
+                handle.set_fx(Effect.Dim)
+                handle.prints(sections[4])
+                handle.goto(from_col, from_top)
+                handle.set_fx(Effect.Reset)
+                handle.set_fg(Color.Green)
+                handle.printf(sections[0])
+                props["menu_index"] = 0
+                index = props["menu_index"]
+            else:
+                # Move down one
+                handle.goto(from_col, from_top + index)
+                handle.set_fx(Effect.Dim)
+                handle.prints(sections[index])
+                props["menu_index"] = index + 1
+                index = props["menu_index"]
+                handle.goto(from_col, from_top + index)
+                handle.set_fx(Effect.Reset)
+                handle.set_fg(Color.Green)
+                handle.printf(sections[index])
+
+        elif evt.kind() == InputEvent.Enter:
+            props["section_id"] = index
+            break
+
         else:
-            # Move up one
-            handle.goto(from_col, from_top + index)
-            handle.set_fx(Effect.Dim)
-            handle.prints(sections[index])
-            props["menu_index"] = index - 1
-            index = props["menu_index"]
-            handle.goto(from_col, from_top + index)
-            handle.set_fx(Effect.Reset)
-            handle.set_fg(Color.Green)
-            handle.printf(sections[index])
-
-    elif evt.kind() == InputEvent.Down:
-        if index == 4:
-            # At bottom, so wrap around
-            handle.goto(from_col, from_top + 4)
-            handle.set_fx(Effect.Dim)
-            handle.prints(sections[4])
-            handle.goto(from_col, from_top)
-            handle.set_fx(Effect.Reset)
-            handle.set_fg(Color.Green)
-            handle.printf(sections[0])
-            props["menu_index"] = 0
-            index = props["menu_index"]
-        else:
-            # Move down one
-            handle.goto(from_col, from_top + index)
-            handle.set_fx(Effect.Dim)
-            handle.prints(sections[index])
-            props["menu_index"] = index + 1
-            index = props["menu_index"]
-            handle.goto(from_col, from_top + index)
-            handle.set_fx(Effect.Reset)
-            handle.set_fg(Color.Green)
-            handle.printf(sections[index])
-
-    elif evt.kind() == InputEvent.Enter:
-        props["section_id"] = index
-
-    else:
-        pass
+            pass

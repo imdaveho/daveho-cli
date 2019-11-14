@@ -1,28 +1,40 @@
-from time import sleep
+import asyncio
 from ffi import InputEvent, Clear, Effect
-from . import splash
+from . import splash, about
 
 
-def listen(props):
+async def listen(props):
     # (w, h) = (props["width"], props["height"])
     delay = props["delay"]
     handle = props["handle"]
 
     while True:
-        sleep(delay)
+        await asyncio.sleep(delay)
         if not props["is_running"]:
             break
+
         evt = handle.poll_latest_async()
-        # end loop check
-        handle_quit(evt, props)
+        # # end loop check
+        # handle_quit(evt, props)
+
         # handle events for each section
         section = props["section_id"]
         if section == -1:   # Splash
-            splash.handle_splash(evt, props)
+            # await asyncio.gather(
+            #     asyncio.create_task(splash.handle_splash(evt, props)),
+            #     asyncio.create_task(handle_quit(evt, props))
+            # )
+            await handle_quit(evt, props)
         elif section == 0:  # About
             reset_section(props)
-            # render section
-            # handle section
+            # render animation is blocking
+            # requires async loop
+            # await asyncio.gather(
+            #     asyncio.create_task(about.render(props)),
+            #     asyncio.create_task(about.handle_about(evt, props)),
+            #     asyncio.create_task(handle_quit(evt, props))
+            # )
+            # await about.handle(evt, props)
         elif section == 1:  # Experience
             reset_section(props)
             # render section
@@ -62,14 +74,21 @@ def reset_section(props):
     handle.printf(f"- {name} -")
 
 
-def handle_quit(evt, props):
-    if evt is None:
-        return
-    w = props["width"]
-    if evt.kind() == InputEvent.Ctrl:
-        if evt.data() == 'q':
-            props["is_running"] = False
-    elif evt.kind() == InputEvent.MousePressLeft:
-        (col, row) = evt.data()
-        if row == 0 and (w - 4) <= col <= (w - 2):
-            props["is_running"] = False
+async def handle_quit(evt, props):
+    delay = props["delay"]
+    while True:
+        if evt is None:
+            await asyncio.sleep(delay)
+            continue
+        if not props["is_running"]:
+            break
+        w = props["width"]
+        if evt.kind() == InputEvent.Ctrl:
+            if evt.data() == 'q':
+                props["is_running"] = False
+                break
+        elif evt.kind() == InputEvent.MousePressLeft:
+            (col, row) = evt.data()
+            if row == 0 and (w - 4) <= col <= (w - 2):
+                props["is_running"] = False
+                break
