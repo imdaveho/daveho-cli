@@ -313,6 +313,9 @@ class EventHandle:
         return self
 
     def __exit__(self, exception_type, exception_value, traceback):
+        # NOTE: let's ensure everything cleans up
+        # see self.stop() and self.close()
+        lib.event_handle_stop(self.ptr)
         lib.event_handle_free(self.ptr)
 
     # Cursor Actions
@@ -490,6 +493,9 @@ class EventHandle:
 
     # Manual cleanup (if not using with statement)
     def close(self):
+        # NOTE: let's ensure everything cleans up
+        # see self.stop()
+        lib.event_handle_stop(self.ptr)
         lib.event_handle_free(self.ptr)
 
 

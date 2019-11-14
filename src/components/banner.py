@@ -6,20 +6,20 @@ from ffi import Color, Effect
 
 
 def render(props):
-    handle = props["handle"]
-    w = props["width"]
+    tty = props["dispatcher"]
+    w = props["size"][0]
     # Top Bar
-    handle.goto(0, 0)
-    handle.set_fg(Color.Green)
-    handle.prints(" ≡ ")
-    handle.set_fg(Color.Reset)
-    handle.prints("MENU")
-    handle.goto(w - 4, 0)
-    handle.set_fg(Color.Red)
-    handle.prints("[x]")
-    handle.set_fg(Color.Reset)
+    tty.goto(0, 0)
+    tty.set_fg(Color.Green)
+    tty.prints(" ≡ ")
+    tty.set_fg(Color.Reset)
+    tty.prints("MENU")
+    tty.goto(w - 4, 0)
+    tty.set_fg(Color.Red)
+    tty.prints("[x]")
+    tty.set_fg(Color.Reset)
     # Horiz Rule
-    handle.goto(0, 1)
-    handle.set_fx(Effect.Dim)
-    handle.prints("─" * w)
-    handle.set_fx(Effect.Reset)
+    tty.goto(0, 1)
+    tty.set_fx(Effect.Dim)
+    tty.prints("─" * w)
+    tty.set_fx(Effect.Reset)

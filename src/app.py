@@ -3,9 +3,32 @@ import asyncio
 # from itertools import cycle
 # from webbrowser import open_new_tab
 # import tuitty library
-from ffi import Dispatcher
+from ffi import Dispatcher, InputEvent
 # import application components
-from components import banner, intro, splash, events
+from components import banner, intro, splash, sections
+
+
+async def handle_quit(props):
+    delay = props["delay"]
+    tty = props["dispatcher"]
+    with tty.spawn() as handle:
+        while True:
+            await asyncio.sleep(delay)
+            evt = handle.poll_latest_async()
+            if evt is None:
+                continue
+            w = props["size"][0]
+            if evt.kind() == InputEvent.Ctrl:
+                if evt.data() == 'q':
+                    props["is_running"] = False
+                    break
+            elif evt.kind() == InputEvent.MousePressLeft:
+                (col, row) = evt.data()
+                if row == 0 and (w - 4) <= col <= (w - 2):
+                    props["is_running"] = False
+                    break
+        # <-- end loop
+    # <-- close handle
 
 
 async def main():
@@ -15,39 +38,35 @@ async def main():
         tty.raw()
         tty.enable_mouse()
         tty.hide_cursor()
-        # spawn EventHandles
+        shared_props = {
+            "size": (0, 0),
+            "delay": 0.1,
+            "offset_mid": 3,
+            "dispatcher": tty,
+            "is_running": True,
+            "sections": [
+                "ABOUT", "EXPERIENCE", "SKILLS",
+                "RECENT POSTS", "OPEN SOURCE"
+            ],
+            "section_id": -1,
+            "menu_index": 0,
+            "is_menu_open": False,
+        }
+        # update props with screen dimensions
         with tty.listen() as handle:
-            (w, h) = handle.size()
-            # shared properties across components
-            shared_props = {
-                "width": w,
-                "height": h,
-                "delay": 0.1,
-                "offset_mid": 3,
-                "handle": handle,
-                "is_running": True,
-                "sections": [
-                    "ABOUT", "EXPERIENCE", "SKILLS",
-                    "RECENT POSTS", "OPEN SOURCE"
-                ],
-                "section_id": -1,
-                "menu_index": 0,
-                "is_menu_open": False,
-            }
-            # Render top banner
-            banner.render(shared_props)
-            intro.render(shared_props)
-            splash.render(shared_props)
-            tty.flush()
-            # Handle events across various sections
-            await events.listen(shared_props)
-        # <-- handle closes
+            shared_props["size"] = handle.size()
+        # Render top banner
+        banner.render(shared_props)
+        intro.render(shared_props)
+        splash.render(shared_props)
+        tty.flush()
 
-        # handle.close()
-        # events.close()
-        # temporary --
-        # events = tty.spawn()
-        # sleep(2)
+        await asyncio.gather(
+            asyncio.create_task(handle_quit(shared_props)),
+            asyncio.create_task(sections.toggle(shared_props))
+        )
+
+        # await asyncio.sleep(2)
 
         # restore screen
         tty.disable_mouse()
