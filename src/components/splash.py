@@ -63,8 +63,8 @@ async def handle(props):
             index = props["menu_index"]
             sections = props["sections"]
             # handle events
-            handle.set_fx(Effect.Reset)
             if evt.kind() == InputEvent.Up:
+                handle.set_fx(Effect.Reset)
                 if index == 0:
                     # At top, so wrap around
                     handle.goto(from_col, from_top)
@@ -88,6 +88,7 @@ async def handle(props):
                     handle.set_fg(Color.Green)
                     handle.printf(sections[index])
             elif evt.kind() == InputEvent.Down:
+                handle.set_fx(Effect.Reset)
                 if index == 4:
                     # At bottom, so wrap around
                     handle.goto(from_col, from_top + 4)
@@ -111,6 +112,7 @@ async def handle(props):
                     handle.set_fg(Color.Green)
                     handle.printf(sections[index])
             elif evt.kind() == InputEvent.Enter:
+                handle.set_fx(Effect.Reset)
                 props["section_id"] = index
                 break
             else:

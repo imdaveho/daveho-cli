@@ -14,6 +14,8 @@ async def handle_quit(props):
     with tty.spawn() as handle:
         while True:
             await asyncio.sleep(delay)
+            if not props["is_running"]:
+                break
             evt = handle.poll_latest_async()
             if evt is None:
                 continue
@@ -53,6 +55,7 @@ async def main():
             "section_id": -1,
             "menu_index": 0,
             "is_menu_open": False,
+            "statline": 0,
         }
         # update props with screen dimensions
         with tty.listen() as handle:
@@ -68,6 +71,9 @@ async def main():
             asyncio.create_task(sections.toggle(shared_props)),
             asyncio.create_task(menu.handle(shared_props))
         )
+
+        # TODO: update so that if is_running == False to close the
+        # event loop all together
 
         # await asyncio.sleep(2)
 

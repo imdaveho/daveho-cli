@@ -1,6 +1,6 @@
 import asyncio
 from ffi import Color, Effect, InputEvent
-from . import about
+from . import about, stats
 
 
 def render(props):
@@ -179,6 +179,9 @@ async def handle(props):
 
             elif evt.kind() == InputEvent.Enter and props["is_menu_open"]:
                 props["is_menu_open"] = False
+                reset_menu(handle)
+                reset_section(props)
+                handle.flush()
                 props["section_id"] = index
             else:
                 pass
@@ -203,5 +206,6 @@ def reset_section(props):
     section = props["section_id"]
     section_fx = {
         0: about.render_blurb,
+        1: stats.render_statline
     }.get(section, lambda props: None)
     section_fx(props)

@@ -1,6 +1,6 @@
 import asyncio
 from ffi import Clear, Effect
-from . import splash, about
+from . import splash, about, stats
 
 
 async def toggle(props):
@@ -26,8 +26,7 @@ async def toggle(props):
             )
         elif section == 1:  # Experience
             reset_section(props)
-            # render section
-            # handle section
+            await stats.handle(props)
         elif section == 2:  # Skills
             reset_section(props)
             # render section
