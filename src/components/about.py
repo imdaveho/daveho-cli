@@ -25,7 +25,7 @@ async def render(props):
         ("#: Cannot find", "vcvarsall.bat")]
     relaxes = [
         ("Ok, keep calm", "and carry on"),
-        ("Hmm...oh! Just", "a typo : vs ;"), 
+        ("Hmm...oh! Just", "a typo : vs ;"),
         ("www.reddit.com/", "r/funnycats"),
         ("It works again!", "...no idea why"),
         ("Not a bug! Call", "it a feature!"),
@@ -97,7 +97,7 @@ async def render(props):
         for i, line in enumerate(updated.split("\n")):
             if i % 14 == 0:
                 continue
-            padded += line.center(w)[:w - 1] + "\n"
+            padded += line.center(w)
         iterations += 1
         tty.printf(padded)
         await asyncio.sleep(scene_delay)
