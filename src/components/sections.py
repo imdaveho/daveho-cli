@@ -24,40 +24,29 @@ async def toggle(props):
                 asyncio.create_task(about.render(props)),
                 asyncio.create_task(about.handle(props))
             )
+        elif section == 1:  # Experience
+            reset_section(props)
+            # render section
+            # handle section
+        elif section == 2:  # Skills
+            reset_section(props)
+            # render section
+            # handle section
+        elif section == 3:  # Recent Posts
+            reset_section(props)
+            # render section
+            # handle section
+        elif section == 4:  # Open Source
+            reset_section(props)
+            # render section
+            # handle section
         else:
             pass
 
-    #     elif section == 0:  # About
-    #         reset_section(props)
-    #         # render animation is blocking
-    #         # requires async loop
-    #         # await asyncio.gather(
-    #         #     asyncio.create_task(about.render(props)),
-    #         #     asyncio.create_task(about.handle_about(evt, props)),
-    #         #     asyncio.create_task(handle_quit(evt, props))
-    #         # )
-    #         # await about.handle(evt, props)
-    #     elif section == 1:  # Experience
-    #         reset_section(props)
-    #         # render section
-    #         # handle section
-    #     elif section == 2:  # Skills
-    #         reset_section(props)
-    #         # render section
-    #         # handle section
-    #     elif section == 3:  # Recent Posts
-    #         reset_section(props)
-    #         # render section
-    #         # handle section
-    #     elif section == 4:  # Open Source
-    #         reset_section(props)
-    #         # render section
-    #         # handle section
-    #     else:
-    #         pass
-
 
 def reset_section(props):
+    if props["is_menu_open"]:
+        return
     # local variables
     w = props["size"][0]
     tty = props["dispatcher"]

@@ -51,18 +51,18 @@ async def handle(props):
     with tty.spawn() as handle:
         while True:
             await asyncio.sleep(delay)
+            if not props["is_running"]:
+                break
             evt = handle.poll_latest_async()
             if evt is None:
                 continue
-            if not props["is_running"]:
-                break
             # setup region and local variables
             (w, h) = props["size"]
             from_col = w // 2 - 9
             from_top = h // 3 + 3 + 2
             index = props["menu_index"]
             sections = props["sections"]
-
+            # handle events
             handle.set_fx(Effect.Reset)
             if evt.kind() == InputEvent.Up:
                 if index == 0:

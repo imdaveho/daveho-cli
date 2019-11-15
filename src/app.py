@@ -5,7 +5,7 @@ import asyncio
 # import tuitty library
 from ffi import Dispatcher, InputEvent
 # import application components
-from components import banner, intro, splash, sections
+from components import banner, intro, splash, sections, menu
 
 
 async def handle_quit(props):
@@ -27,6 +27,8 @@ async def handle_quit(props):
                 if row == 0 and (w - 4) <= col <= (w - 2):
                     props["is_running"] = False
                     break
+            else:
+                pass
         # <-- end loop
     # <-- close handle
 
@@ -63,7 +65,8 @@ async def main():
 
         await asyncio.gather(
             asyncio.create_task(handle_quit(shared_props)),
-            asyncio.create_task(sections.toggle(shared_props))
+            asyncio.create_task(sections.toggle(shared_props)),
+            asyncio.create_task(menu.handle(shared_props))
         )
 
         # await asyncio.sleep(2)
