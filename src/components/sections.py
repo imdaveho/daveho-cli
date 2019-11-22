@@ -1,6 +1,6 @@
 import asyncio
 from ffi import Clear, Effect
-from . import splash, about, stats
+from . import splash, about, stats, skills
 
 
 async def toggle(props):
@@ -16,10 +16,6 @@ async def toggle(props):
             await splash.handle(props)
         elif section == 0:  # About
             reset_section(props)
-            # await asyncio.gather(
-            #     asyncio.create_task(about.test(props)),
-            #     asyncio.create_task(about.handle(props))
-            # )
             await asyncio.gather(
                 asyncio.create_task(about.render(props)),
                 asyncio.create_task(about.handle(props))
@@ -29,17 +25,19 @@ async def toggle(props):
             await stats.handle(props)
         elif section == 2:  # Skills
             reset_section(props)
-            # render section
-            # handle section
+            await skills.handle(props)
         elif section == 3:  # Recent Posts
             reset_section(props)
             # render section
             # handle section
+            await asyncio.sleep(5)
         elif section == 4:  # Open Source
             reset_section(props)
             # render section
             # handle section
+            await asyncio.sleep(5)
         else:
+            await asyncio.sleep(delay)
             pass
 
 

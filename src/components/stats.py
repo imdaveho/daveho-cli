@@ -11,8 +11,8 @@ document = {
             "text": "Career Summary",
             "styles": (None, None, Effect.Bold)
         }, {
-            "start": 62,
-            "text": "(view PDF)",
+            "start": 57,
+            "text": "(view full PDF)",
             "styles": (Color.Cyan, None, None)
         }, ],
     1: [{
@@ -55,12 +55,14 @@ document = {
         }, ],
     7: [{
             "start": 1,
-            "text": ' * Managed the creation of a cross-functional workflow engine.',
+            "text": " * Managed the creation of a cross-functional " +
+                    "workflow engine.",
             "styles": (None, None, None)
         }, ],
     8: [{
             "start": 1,
-            "text": " * Unified multi-tenant, distributed systems of 18 separate teams.",
+            "text": " * Unified multi-tenant, distributed systems of " +
+                    "18 separate teams.",
             "styles": (None, None, None)
         }, ],
     9: [{
@@ -84,12 +86,14 @@ document = {
         }, ],
     12: [{
             "start": 1,
-            "text": " * Drove API initiatives for 3rd-party apps that incr. revenue +48%.",
+            "text": " * Drove API initiatives for 3rd-party apps " +
+                    "that incr. revenue +48%.",
             "styles": (None, None, None)
         }, ],
     13: [{
             "start": 1,
-            "text": " * Optimized shopping UX to incr. retention and conversion +30%.",
+            "text": " * Optimized shopping UX to incr. retention and " +
+                    "conversion +30%.",
             "styles": (None, None, None)
         }, ],
     14: [{
@@ -108,7 +112,8 @@ document = {
         }, ],
     16: [{
             "start": 1,
-            "text": " * Launched AnvilIQ product that managed client equity grants.",
+            "text": " * Launched AnvilIQ product that managed client " +
+                    "equity grants.",
             "styles": (None, None, None)
         }, ],
     17: [{
@@ -127,7 +132,8 @@ document = {
         }, ],
     19: [{
             "start": 1,
-            "text": " * Launched beta with 50+ SMB partners and 300+ registered users.",
+            "text": " * Launched beta with 50+ SMB partners and 300+ " +
+                    "registered users.",
             "styles": (None, None, None)
         }, ],
     20: [{
@@ -146,7 +152,8 @@ document = {
         }, ],
     22: [{
             "start": 1,
-            "text": " * Advised web division build of listed company networking service.",
+            "text": " * Advised web division build of listed company " +
+                    "networking service.",
             "styles": (None, None, None)
         }, ],
     23: [{
@@ -175,12 +182,13 @@ document = {
         }, ],
     27: [{
             "start": 1,
-            "text": " * B.S. Finance and Economics",
+            "text": " * Bachelor of Science in Finance and Economics.",
             "styles": (None, None, None)
         }, ],
     28: [{
             "start": 1,
-            "text": " * V.P. of MCG and creator of PwC student mentorship program.",
+            "text": " * Vice President of MCG and creator of PwC student " +
+                    "mentorship program.",
             "styles": (None, None, None)
         }, ],
     29: [{
@@ -248,6 +256,7 @@ async def handle(props):
         while True:
             await asyncio.sleep(delay)
             if not props["is_running"] or props["section_id"] != 1:
+                props["statline"] = 0
                 break
             evt = handle.poll_latest_async()
             if evt is None:

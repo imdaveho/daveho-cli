@@ -56,6 +56,11 @@ async def main():
             "menu_index": 0,
             "is_menu_open": False,
             "statline": 0,
+            "skill_index": 0,
+            "technical_index": 0,
+            "product_index": 0,
+            "leader_index": 0,
+            "analysis_index": 0,
         }
         # update props with screen dimensions
         with tty.listen() as handle:
