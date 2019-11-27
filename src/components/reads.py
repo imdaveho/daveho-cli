@@ -83,7 +83,6 @@ async def handle(props):
                     props["recent_index"] = 0
                 else:
                     props["recent_index"] -= 1
-                choice = props["recent_index"]
                 render_reads(props)
 
             elif evt.kind() == InputEvent.Down and not props["is_menu_open"]:
@@ -91,7 +90,6 @@ async def handle(props):
                     props["recent_index"] = 8 - 1
                 else:
                     props["recent_index"] += 1
-                choice = props["recent_index"]
                 render_reads(props)
 
             elif evt.kind() == InputEvent.Enter and not props["is_menu_open"]:

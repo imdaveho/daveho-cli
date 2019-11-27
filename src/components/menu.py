@@ -1,6 +1,6 @@
 import asyncio
 from ffi import Color, Effect, InputEvent
-from . import about, stats, skills, reads
+from . import about, stats, skills, reads, opensrc
 
 
 def render(props):
@@ -214,5 +214,6 @@ def reset_section(props):
         1: stats.render_statline,
         2: skills.render_categories,
         3: reads.render_reads,
+        4: opensrc.render
     }.get(section, lambda props: None)
     section_fx(props)

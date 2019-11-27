@@ -64,6 +64,7 @@ async def main():
             "analysis_index": 0,
             "recent_index": 0,
             "recent_cache": [],
+            "opensrc_index": 0
         }
         # update props with screen dimensions
         with tty.listen() as handle:
