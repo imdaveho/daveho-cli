@@ -1,6 +1,6 @@
 import asyncio
 from ffi import Color, Effect, InputEvent
-from . import about, stats
+from . import about, stats, skills, reads
 
 
 def render(props):
@@ -211,6 +211,8 @@ def reset_section(props):
     section = props["section_id"]
     section_fx = {
         0: about.render_blurb,
-        1: stats.render_statline
+        1: stats.render_statline,
+        2: skills.render_categories,
+        3: reads.render_reads,
     }.get(section, lambda props: None)
     section_fx(props)

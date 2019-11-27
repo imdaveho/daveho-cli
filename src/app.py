@@ -50,17 +50,20 @@ async def main():
             "is_running": True,
             "sections": [
                 "ABOUT", "EXPERIENCE", "SKILLS",
-                "RECENT POSTS", "OPEN SOURCE"
+                "RECENT READS", "OPEN SOURCE"
             ],
             "section_id": -1,
             "menu_index": 0,
             "is_menu_open": False,
             "statline": 0,
             "skill_index": 0,
+            "skill_detail_open": False,
             "technical_index": 0,
             "product_index": 0,
             "leader_index": 0,
             "analysis_index": 0,
+            "recent_index": 0,
+            "recent_cache": [],
         }
         # update props with screen dimensions
         with tty.listen() as handle:

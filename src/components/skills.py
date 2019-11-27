@@ -2,13 +2,15 @@ import asyncio
 from ffi import Effect, Color, InputEvent, Clear
 
 
-def render_categories(choice, tty, w):
-    # tty = props["dispatcher"]
+def render_categories(props):
+    tty = props["dispatcher"]
     categories = ["Technical", "Product", "Leadership", "Analytics"]
     width = 65
+    w = props["size"][0]
     from_left = (w - width) // 2
     # print skill list
-    # choice = props["skill_index"]
+    choice = props["skill_index"]
+    is_detail_open = props["skill_detail_open"]
     for i, cat in enumerate(categories):
         if i == choice:
             tty.goto(from_left, 6 + i * 2)
@@ -19,6 +21,13 @@ def render_categories(choice, tty, w):
         else:
             tty.goto(from_left, 6 + i * 2)
             tty.prints(f"   {cat}".ljust(11))
+    if is_detail_open:
+        from_left = (w - width) // 2
+        tty.goto(from_left, 6 + (choice * 2))
+        tty.set_fx(Effect.Reverse)
+        category = categories[choice]
+        tty.prints(f" › {category}".ljust(14))
+        tty.set_fx(Effect.Reset)
     tty.flush()
 
 
@@ -359,12 +368,12 @@ def render_data_list(tty, from_left, selected):
 async def handle(props):
     delay = props["delay"]
     tty = props["dispatcher"]
-    is_detail_open = False
+    is_detail_open = props["skill_detail_open"]
     choice = props["skill_index"]
     w = props["size"][0]
     width = 65
     from_left = (w - width) // 2 + 14
-    render_categories(choice, tty, w)
+    render_categories(props)
     with tty.spawn() as handle:
         while True:
             await asyncio.sleep(delay)
@@ -375,7 +384,7 @@ async def handle(props):
             if evt is None:
                 continue
 
-            if evt.kind() == InputEvent.Up:
+            if evt.kind() == InputEvent.Up and not props["is_menu_open"]:
                 # depending on if detail is open or which skill section
                 # this will either update the detail or the skill list
                 if not is_detail_open:
@@ -384,7 +393,7 @@ async def handle(props):
                     else:
                         props["skill_index"] -= 1
                     choice = props["skill_index"]
-                    render_categories(choice, tty, w)
+                    render_categories(props)
                 elif is_detail_open and choice == 0:
                     # handle tech list
                     if props["technical_index"] - 1 < 0:
@@ -412,7 +421,7 @@ async def handle(props):
                 else:
                     pass
 
-            elif evt.kind() == InputEvent.Down:
+            elif evt.kind() == InputEvent.Down and not props["is_menu_open"]:
                 # depending on if detail is open or which skill section
                 # this will either update the detail or the skill list
                 if not is_detail_open:
@@ -421,7 +430,7 @@ async def handle(props):
                     else:
                         props["skill_index"] += 1
                     choice = props["skill_index"]
-                    render_categories(choice, tty, w)
+                    render_categories(props)
                 elif is_detail_open and choice == 0:
                     # handle tech list
                     maxlen = len(technical_list)
@@ -450,21 +459,25 @@ async def handle(props):
                 else:
                     pass
 
-            elif (evt.kind() == InputEvent.Left or
-                  evt.kind() == InputEvent.Backspace):
+            elif ((evt.kind() == InputEvent.Left or
+                  evt.kind() == InputEvent.Backspace) and
+                  not props["is_menu_open"]):
                 if is_detail_open:
-                    is_detail_open = False
+                    props["skill_detail_open"] = False
+                    is_detail_open = props["skill_detail_open"]
                     # clear detail section
                     for i in range(8):
                         tty.goto(from_left, 6 + i)
                         tty.clear(Clear.NewLine)
                     tty.clear(Clear.CursorDown)
-                    render_categories(choice, tty, w)
+                    render_categories(props)
 
-            elif (evt.kind() == InputEvent.Right or
-                  evt.kind() == InputEvent.Enter):
+            elif ((evt.kind() == InputEvent.Right or
+                  evt.kind() == InputEvent.Enter) and
+                  not props["is_menu_open"]):
                 if not is_detail_open:
-                    is_detail_open = True
+                    props["skill_detail_open"] = True
+                    is_detail_open = props["skill_detail_open"]
                     # load appropriate detail section
                     data = {
                         "technical_index": props["technical_index"],

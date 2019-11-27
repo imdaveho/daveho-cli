@@ -1,6 +1,6 @@
 import asyncio
 from ffi import Clear, Effect
-from . import splash, about, stats, skills
+from . import splash, about, stats, skills, reads
 
 
 async def toggle(props):
@@ -26,11 +26,14 @@ async def toggle(props):
         elif section == 2:  # Skills
             reset_section(props)
             await skills.handle(props)
-        elif section == 3:  # Recent Posts
+        elif section == 3:  # Recent Reads
             reset_section(props)
-            # render section
-            # handle section
-            await asyncio.sleep(5)
+            if len(props["recent_cache"]) == 0:
+                await asyncio.gather(
+                    asyncio.create_task(reads.render_loading(props)),
+                    asyncio.create_task(reads.fetch_list(props))
+                )
+            await reads.handle(props)
         elif section == 4:  # Open Source
             reset_section(props)
             # render section
